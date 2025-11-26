@@ -1,0 +1,342 @@
+/* =========================================
+   CONTAINER PRINCIPAL
+========================================= */
+.historico-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-top: 24px;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+}
+
+.historico-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.historico-title {
+  font-size: 18px;
+  color: #253b1e;
+  font-weight: 600;
+  margin: 0;
+}
+
+.count-badge {
+  background-color: #f1f5f9;
+  color: #648b73;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+/* =========================================
+   SELETOR DE DATA PERSONALIZADO (NOVO DESIGN)
+========================================= */
+.custom-date-selector {
+  position: relative;
+  z-index: 50; /* Garante que o menu fique por cima */
+}
+
+/* O Botão Principal */
+.selector-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1px solid #cde1cb;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: #1e3b24;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 220px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.selector-trigger:hover, .selector-trigger.active {
+  background-color: #f8fcf8;
+}
+
+.calendar-icon {
+  color: #648b66;
+}
+
+/* O Menu Flutuante (Dropdown) */
+.month-dropdown {
+  position: absolute;
+  top: calc(100% + 8px); /* 8px abaixo do botão */
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #e2f0e5;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cabeçalho do Ano */
+.year-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.year-display {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f2a15;
+}
+
+.nav-arrow {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #648b73;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.nav-arrow:hover {
+  background-color: #f1f5f9;
+  color: #0f2a14;
+  border-color: #e2e8f0;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin-bottom: 12px;
+}
+
+/* Grade de Meses */
+.months-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Colunas */
+  gap: 8px;
+}
+
+.month-btn {
+  background: #ffffff;
+  border: 1px solid transparent;
+  padding: 8px 4px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #47694e;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.month-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f2a1a;
+  font-weight: 600;
+}
+
+/* Mês Selecionado */
+.month-btn.selected {
+  background-color: #103321; /* Cor escura da marca */
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* =========================================
+   RESUMO MENSAL
+========================================= */
+.monthly-summary-box {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.ms-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ms-item span {
+  font-size: 12px;
+  color: #648b73;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.ms-item strong {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ms-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #cbd5e1;
+}
+
+/* =========================================
+   LISTA DE TRANSAÇÕES
+========================================= */
+.filters-container {
+  margin-bottom: 16px;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+  border-radius: 8px;
+}
+
+.transaction-item:hover {
+  background-color: #f8fff8;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.t-icon {
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f8fafc;
+}
+
+.t-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.t-info strong {
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.t-cat-date {
+  font-size: 12px;
+  color: #94b8a4;
+  font-weight: 500;
+}
+
+.t-value {
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 24px;
+  min-width: 100px;
+  text-align: right;
+}
+
+.t-value.entrada { color: #16a34a; }
+.t-value.saida { color: #ef4444; }
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.transaction-item:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+/* =========================================
+   ESTADOS
+========================================= */
+.loading-container, .empty-state-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  color: #94b8a0;
+}
+
+.empty-text {
+  font-size: 14px;
+  margin-top: 16px;
+  font-weight: 400;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .monthly-summary-box {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .ms-item {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .ms-divider {
+    width: 100%;
+    height: 1px;
+  }
+}
