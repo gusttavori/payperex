@@ -4,7 +4,7 @@ import {
   Calendar, ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import api from '../../services/api';
-import './historico.css';
+import './Historico.css';
 
 export default function Historico() {
   const [transactions, setTransactions] = useState([]);
