@@ -14,7 +14,7 @@ import {
 
 import logo from '../../assets/Payperex.png'; 
 import api from '../../services/api';
-import Historico from './Historico'; // CORRETO (H maiúsculo)
+import Historico from './HistoricoMensal'; // CORRETO (H maiúsculo)
 import TransactionModal from './TransactionModal';
 import './Dashboard.css';
 
@@ -364,3 +364,5 @@ export default function Dashboard({ onLogout }) {
     </div>
   );
 }
+
+// FORÇANDO ATUALIZAÇÃO DO GIT
