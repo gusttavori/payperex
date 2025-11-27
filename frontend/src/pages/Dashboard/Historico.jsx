@@ -75,6 +75,9 @@ export default function Historico() {
   }, [transactions, selectedMonth]);
 
   const monthlySummary = useMemo(() => {
+    // Garante que não quebre se transactions for null
+    if (!transactions) return { income: 0, expense: 0, balance: 0 };
+
     const income = filteredTransactions
       .filter(t => t.type === 'entrada')
       .reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
@@ -84,7 +87,7 @@ export default function Historico() {
       .reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
 
     return { income, expense, balance: income - expense };
-  }, [filteredTransactions]);
+  }, [filteredTransactions, transactions]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -160,8 +163,11 @@ export default function Historico() {
         </div>
       </div>
 
-      {/* RESUMO */}
-      {!loading && (
+      {/* ALTERAÇÃO AQUI: 
+          Adicionada a condição "filteredTransactions.length > 0".
+          Se não tiver transações, o resumo NÃO aparece.
+      */}
+      {!loading && filteredTransactions.length > 0 && (
         <div className="monthly-summary-box">
           <div className="ms-item">
             <span>Entradas</span>
@@ -182,13 +188,18 @@ export default function Historico() {
         </div>
       )}
       
-      <div className="filters-container">
-        <span className="count-badge">
-          {filteredTransactions.length} transações encontradas
-        </span>
-      </div>
+      {/* Também escondemos a badge de contagem se estiver vazio,
+         para ficar "apenas" a mensagem de vazio.
+      */}
+      {!loading && filteredTransactions.length > 0 && (
+        <div className="filters-container">
+          <span className="count-badge">
+            {filteredTransactions.length} transações encontradas
+          </span>
+        </div>
+      )}
 
-      {/* LISTA */}
+      {/* LISTA OU MENSAGEM DE VAZIO */}
       {loading ? (
         <div className="loading-container">
           <Loader2 className="animate-spin" size={32} color="#3bf683ff" />
@@ -197,6 +208,7 @@ export default function Historico() {
         <>
           {filteredTransactions.length === 0 ? (
             <div className="empty-state-container">
+              {/* Aqui aparece apenas a mensagem quando não há dados */}
               <p className="empty-text">Nenhuma movimentação em {currentMonthName}.</p>
             </div>
           ) : (

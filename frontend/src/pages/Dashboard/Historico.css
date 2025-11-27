@@ -10,6 +10,9 @@
   min-height: 450px;
   display: flex;
   flex-direction: column;
+  /* CORREÇÃO DO TRAVAMENTO: Garante que o card não cubra o header */
+  position: relative;
+  z-index: 1; 
 }
 
 .historico-header-row {
@@ -17,20 +20,19 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  flex-wrap: wrap;
   gap: 16px;
 }
 
 .historico-title {
-  font-size: 18px;
-  color: #253b1e;
-  font-weight: 600;
+  font-size: 20px;
+  color: #1e293b;
+  font-weight: 700;
   margin: 0;
 }
 
 .count-badge {
   background-color: #f1f5f9;
-  color: #648b73;
+  color: #475569;
   font-size: 12px;
   font-weight: 600;
   padding: 6px 12px;
@@ -39,24 +41,23 @@
 }
 
 /* =========================================
-   SELETOR DE DATA PERSONALIZADO (NOVO DESIGN)
+   SELETOR DE DATA
 ========================================= */
 .custom-date-selector {
   position: relative;
-  z-index: 50; /* Garante que o menu fique por cima */
+  z-index: 50;
 }
 
-/* O Botão Principal */
 .selector-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   background-color: #ffffff;
-  border: 1px solid #cde1cb;
+  border: 1px solid #cbd5e1;
   padding: 10px 16px;
   border-radius: 8px;
-  color: #1e3b24;
+  color: #334155;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -65,24 +66,23 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-.selector-trigger:hover, .selector-trigger.active {
-  background-color: #f8fcf8;
+.selector-trigger:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
 }
 
-.calendar-icon {
-  color: #648b66;
-}
+.calendar-icon { color: #64748b; }
 
-/* O Menu Flutuante (Dropdown) */
+/* Menu Dropdown */
 .month-dropdown {
   position: absolute;
-  top: calc(100% + 8px); /* 8px abaixo do botão */
+  top: calc(100% + 8px);
   right: 0;
-  width: 280px;
+  width: 300px;
   background: #ffffff;
-  border: 1px solid #e2f0e5;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
   padding: 16px;
   animation: slideDown 0.2s ease-out;
 }
@@ -92,25 +92,28 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Cabeçalho do Ano */
+/* Cabeçalho do Ano no Dropdown */
 .year-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  background-color: #f8fafc;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .year-display {
   font-size: 16px;
   font-weight: 700;
-  color: #0f2a15;
+  color: #0f172a;
 }
 
 .nav-arrow {
-  background: transparent;
-  border: 1px solid transparent;
-  color: #648b73;
-  padding: 4px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #648b64;
+  height: auto;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -120,48 +123,40 @@
 }
 
 .nav-arrow:hover {
-  background-color: #f1f5f9;
-  color: #0f2a14;
-  border-color: #e2e8f0;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background-color: #f1f5f9;
-  margin-bottom: 12px;
+  background-color: #e2e8f0;
+  color: #0f172a;
 }
 
 /* Grade de Meses */
 .months-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 Colunas */
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 
 .month-btn {
   background: #ffffff;
   border: 1px solid transparent;
-  padding: 8px 4px;
+  padding: 8px 0;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
-  color: #47694e;
+  color: #475569;
   cursor: pointer;
   transition: all 0.1s;
 }
 
 .month-btn:hover {
   background-color: #f1f5f9;
-  color: #0f2a1a;
+  color: #1e293b;
   font-weight: 600;
 }
 
-/* Mês Selecionado */
 .month-btn.selected {
-  background-color: #103321; /* Cor escura da marca */
+  background-color: #1e293b;
   color: white;
   font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 /* =========================================
@@ -169,32 +164,37 @@
 ========================================= */
 .monthly-summary-box {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   background-color: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 20px;
+  padding: 24px;
   margin-bottom: 24px;
 }
 
 .ms-item {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  gap: 8px;
+  flex: 1;
 }
+
+/* Alinhamento do texto: Esquerda / Centro / Direita */
+.ms-item:nth-child(1) { align-items: flex-start; }
+.ms-item:nth-child(3) { align-items: center; }
+.ms-item:nth-child(5) { align-items: flex-end; }
 
 .ms-item span {
   font-size: 12px;
-  color: #648b73;
+  color: #64748b;
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 0.5px;
 }
 
 .ms-item strong {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -202,6 +202,7 @@
   width: 1px;
   height: 40px;
   background-color: #cbd5e1;
+  margin: 0 20px;
 }
 
 /* =========================================
@@ -209,28 +210,30 @@
 ========================================= */
 .filters-container {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .transactions-list {
   display: flex;
   flex-direction: column;
+  gap: 12px;
 }
 
 .transaction-item {
   display: flex;
   align-items: center;
-  padding: 16px 8px;
-  border-bottom: 1px solid #f1f5f9;
-  transition: background-color 0.2s;
-  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .transaction-item:hover {
-  background-color: #f8fff8;
-}
-
-.transaction-item:last-child {
-  border-bottom: none;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
 }
 
 .t-icon {
@@ -238,10 +241,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background-color: #f8fafc;
+  flex-shrink: 0;
 }
 
 .t-info {
@@ -249,40 +253,45 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow: hidden; /* Evita que texto grande quebre o layout */
 }
 
 .t-info strong {
-  font-size: 14px;
-  color: #0f172a;
-  font-weight: 600;
+  font-size: 15px;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .t-cat-date {
-  font-size: 12px;
-  color: #94b8a4;
-  font-weight: 500;
+  font-size: 13px;
+  color: #94a3b8;
 }
 
 .t-value {
   font-weight: 700;
-  font-size: 14px;
-  margin-right: 24px;
-  min-width: 100px;
+  font-size: 15px;
+  margin: 0 16px;
   text-align: right;
+  white-space: nowrap;
 }
 
 .t-value.entrada { color: #16a34a; }
 .t-value.saida { color: #ef4444; }
 
 .delete-btn {
-  background: transparent;
+  background: #fee2e2;
   border: none;
-  color: #cbd5e1;
+  color: #ef4444;
   cursor: pointer;
   padding: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.2s;
-  opacity: 0;
+  opacity: 0; /* Invisível no Desktop até passar o mouse */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .transaction-item:hover .delete-btn {
@@ -290,53 +299,105 @@
 }
 
 .delete-btn:hover {
-  background-color: #fee2e2;
-  color: #ef4444;
+  background-color: #fecaca;
+  transform: scale(1.05);
 }
 
-/* =========================================
-   ESTADOS
-========================================= */
+/* Estados de Carregamento e Vazio */
 .loading-container, .empty-state-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 250px;
-  color: #94b8a0;
+  padding: 60px 0;
+  color: #94a3b8;
+  text-align: center;
 }
 
-.empty-text {
-  font-size: 14px;
-  margin-top: 16px;
-  font-weight: 400;
-}
+.animate-spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
 
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
+/* =========================================
+   RESPONSIVIDADE (MOBILE) - O QUE VOCÊ PEDIU
+========================================= */
+@media (max-width: 768px) {
+  
+  /* 1. Container e Header */
+  .historico-card {
+    padding: 16px;
+    margin-top: 16px;
+    min-height: auto;
+  }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+  .historico-header-row {
+    flex-direction: column; /* Empilha Título e Seletor */
+    align-items: flex-start;
+    gap: 16px;
+  }
 
-/* Mobile */
-@media (max-width: 600px) {
+  /* 2. Seletor de Data Full Width */
+  .custom-date-selector {
+    width: 100%;
+  }
+
+  .selector-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .month-dropdown {
+    width: 100%; /* Dropdown ocupa largura total */
+  }
+
+  /* 3. Resumo Mensal Empilhado */
   .monthly-summary-box {
     flex-direction: column;
-    gap: 12px;
     align-items: stretch;
+    gap: 16px;
+    padding: 16px;
   }
-  
+
   .ms-item {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center !important; /* Força alinhamento no mobile */
   }
 
   .ms-divider {
     width: 100%;
     height: 1px;
+    margin: 0;
+  }
+
+  /* 4. Lista de Transações */
+  .transaction-item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .t-icon {
+    width: 36px;
+    height: 36px;
+    margin-right: 0;
+  }
+
+  .t-info strong {
+    font-size: 14px;
+  }
+  
+  .t-cat-date {
+    font-size: 11px;
+  }
+
+  .t-value {
+    font-size: 13px;
+    margin: 0 8px 0 0;
+  }
+
+  /* Botão de Excluir sempre visível no Mobile */
+  .delete-btn {
+    opacity: 1;
+    background-color: transparent; /* Mais sutil no mobile */
+    padding: 4px;
   }
 }
