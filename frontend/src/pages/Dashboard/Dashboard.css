@@ -329,28 +329,72 @@
 /* ================================
    RESPONSIVIDADE (MOBILE)
 ================================ */
+/* ================================
+   RESPONSIVIDADE (MOBILE)
+================================ */
 @media (max-width: 768px) {
   .dashboard-container {
     padding: 16px;
   }
 
-  /* No celular, empilha: Logo primeiro, depois código e sair */
+  /* Reorganiza o Grid do Header */
   .dashboard-header {
-    grid-template-columns: 1fr; 
-    gap: 16px;
-    text-align: center;
+    /* Cria 2 colunas para a linha de baixo (Nome | Botão) */
+    grid-template-columns: 1fr 1fr;
+    /* Define espaço vertical entre a Logo e a linha de baixo */
+    row-gap: 16px; 
+    padding: 16px;
+  }
+
+  /* --- REORDENAÇÃO DOS ITENS --- */
+
+  /* 1. LOGO (É a 2ª div no seu HTML React) 
+     - Movemos ela para a Linha 1 e mandamos ocupar a largura total */
+  .dashboard-header > div:nth-child(2) {
+    grid-column: 1 / -1; /* Ocupa as 2 colunas */
+    grid-row: 1;         /* Força ficar na primeira linha */
+    /* O justifySelf: 'center' inline do React já centraliza ela */
+  }
+
+  /* 2. NOME DA IGREJA (É a 1ª div no seu HTML React)
+     - Movemos para a Linha 2, Coluna 1 (Esquerda) */
+  .dashboard-header > div:nth-child(1) {
+    grid-column: 1;
+    grid-row: 2;
+    /* O justifySelf: 'start' inline do React já alinha à esquerda */
+  }
+
+  /* 3. BOTÃO SAIR (É a 3ª div no seu HTML React)
+     - Movemos para a Linha 2, Coluna 2 (Direita) */
+  .dashboard-header > div:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    /* O justifySelf: 'end' inline do React já alinha à direita */
+  }
+
+  /* Ajustes visuais para mobile */
+  .dashboard-logo {
+    height: 45px; /* Um pouco maior no mobile para destaque */
+    margin-bottom: 0;
   }
 
   .user-code {
-    justify-self: center;
+    font-size: 12px; /* Fonte levemente menor para não quebrar */
+    max-width: 100%;
+    /* Opcional: se o nome for muito grande, coloca "..." */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
   }
 
   .logout-button {
-    justify-self: center;
-    width: 100%;
-    justify-content: center;
+    width: auto;
+    font-size: 12px;
+    padding: 6px 12px;
   }
 
+  /* Mantém o restante da responsividade original */
   .summary-grid,
   .actions-grid,
   .charts-row {

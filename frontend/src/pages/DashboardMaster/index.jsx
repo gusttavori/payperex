@@ -61,7 +61,6 @@ export default function DashboardMaster({ onLogout }) {
       <header className="geral-header">
         <div className="header-info-left">
           <span className="user-code master">ADMINISTRADOR</span>
-          <p className="header-subtitle">Resumo consolidado de todas as unidades</p>
         </div>
 
         <img 

@@ -14,6 +14,7 @@ const login = async (req, res) => {
       { code: process.env.CODE_UNIT_2, name: process.env.NAME_UNIT_2 || 'Unidade 2', role: 'unit' },
       { code: process.env.CODE_UNIT_3, name: process.env.NAME_UNIT_3 || 'Unidade 3', role: 'unit' },
       { code: process.env.CODE_UNIT_4, name: process.env.NAME_UNIT_4 || 'Unidade 4', role: 'unit' },
+      { code: process.env.CODE_UNIT_5, name: process.env.NAME_UNIT_5 || 'Unidade 5', role: 'unit' },
     ];
 
     // 2. Verificar se o código digitado bate com algum do .env

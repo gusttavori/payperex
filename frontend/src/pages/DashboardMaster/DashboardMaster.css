@@ -174,3 +174,79 @@
   position: relative;
   display: block;
 }
+
+/* ================================
+   RESPONSIVIDADE MASTER (MOBILE)
+================================ */
+@media (max-width: 768px) {
+  
+  /* 1. Reconfigura o Grid do Header */
+  .geral-header {
+    display: grid;
+    /* Divide a linha de baixo em duas colunas iguais */
+    grid-template-columns: 1fr 1fr;
+    /* Espaço entre a logo (topo) e os botões (baixo) */
+    row-gap: 16px; 
+    padding: 16px;
+    text-align: center;
+  }
+
+  /* --- REORDENAÇÃO DOS ITENS --- */
+
+  /* 2. LOGO (É o 2º item no HTML) -> Vai para o Topo */
+  .geral-header > img:nth-child(2) {
+    grid-column: 1 / -1; /* Ocupa largura total */
+    grid-row: 1;         /* Fica na primeira linha */
+    justify-self: center;
+    height: 45px;        /* Tamanho ajustado para mobile */
+    margin-bottom: 0;
+  }
+
+  /* 3. INFO/ADMIN (É o 1º item no HTML) -> Vai para Baixo Esquerda */
+  .geral-header > div:nth-child(1) {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start; /* Alinha à esquerda */
+    text-align: left;
+  }
+
+  /* 4. BOTÃO SAIR (É o 3º item no HTML) -> Vai para Baixo Direita */
+  .geral-header > button:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;   /* Alinha à direita */
+    width: auto;         /* Tamanho automático, sem esticar */
+  }
+
+  .geral-logo {
+    height: 40px; /* Um pouco maior no mobile para destaque */
+    margin-bottom: 0;
+  }
+
+  /* Ajustes finos de texto para não quebrar */
+  .user-code.master {
+    font-size: 11px;
+  }
+  
+  .header-subtitle {
+    font-size: 11px;
+    max-width: 140px; /* Evita que o texto empurre o botão de sair */
+    line-height: 1.2;
+  }
+
+  /* Ajuste do grid de cards para uma coluna só */
+  .units-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .master-hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .hero-icon {
+    align-self: flex-end;
+    margin-top: -40px; /* Sobrepõe levemente para economizar espaço */
+  }
+}
