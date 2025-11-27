@@ -14,7 +14,7 @@ import {
 
 import logo from '../../assets/Payperex.png'; 
 import api from '../../services/api';
-import Historico from './historico'; 
+import Historico from './Historico'; 
 import TransactionModal from './TransactionModal';
 import './Dashboard.css';
 
