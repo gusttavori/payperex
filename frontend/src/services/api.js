@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://payperex.onrender.com/', // Endereço do seu Backend
+  baseURL: 'https://payperex.onrender.com', // Endereço do seu Backend
 });
 
 // Antes de cada requisição, verifica se tem token salvo e adiciona no cabeçalho
