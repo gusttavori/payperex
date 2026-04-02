@@ -1,0 +1,433 @@
+/* =========================================
+   CONTAINER PRINCIPAL
+========================================= */
+.historico-card {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-top: 24px;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.historico-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.historico-title {
+  font-size: 20px;
+  color: #1e293b;
+  font-weight: 700;
+  margin: 0;
+}
+
+.count-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+/* =========================================
+   SELETOR DE DATA
+========================================= */
+.custom-date-selector {
+  position: relative;
+  z-index: 50;
+}
+
+.selector-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 220px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.selector-trigger:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.calendar-icon {
+  color: #64748b;
+}
+
+/* Menu Dropdown */
+.month-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 300px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cabeçalho do Ano no Dropdown */
+.year-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  background-color: #f8fafc;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.year-display {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.nav-arrow {
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #648b64;
+  height: auto;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.nav-arrow:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Grade de Meses */
+.months-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.month-btn {
+  background: #ffffff;
+  border: 1px solid transparent;
+  padding: 8px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.month-btn:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.month-btn.selected {
+  background-color: #1e293b;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================================
+   RESUMO MENSAL
+========================================= */
+.monthly-summary-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.ms-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+/* Alinhamento do texto com 4 itens: Esq / Centro / Centro / Dir */
+.ms-item:nth-child(1) {
+  align-items: flex-start;
+}
+
+.ms-item:nth-child(3) {
+  align-items: center;
+}
+
+.ms-item:nth-child(5) {
+  align-items: center;
+}
+
+.ms-item:nth-child(7) {
+  align-items: flex-end;
+}
+
+.ms-item span {
+  font-size: 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.ms-item strong {
+  font-size: 20px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ms-divider {
+  width: 1px;
+  height: 40px;
+  background-color: #cbd5e1;
+  margin: 0 15px;
+}
+
+/* =========================================
+   LISTA DE TRANSAÇÕES
+========================================= */
+.filters-container {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.transaction-item:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.t-icon {
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #f8fafc;
+  flex-shrink: 0;
+}
+
+.t-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.t-info strong {
+  font-size: 15px;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-cat-date {
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.t-value {
+  font-weight: 700;
+  font-size: 15px;
+  margin: 0 16px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.t-value.entrada {
+  color: #16a34a;
+}
+
+.t-value.saida {
+  color: #ef4444;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transaction-item:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  background-color: #fecaca;
+  transform: scale(1.05);
+}
+
+/* Estados de Carregamento e Vazio */
+.loading-container,
+.empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+========================================= */
+@media (max-width: 768px) {
+  .historico-card {
+    padding: 16px;
+    margin-top: 16px;
+    min-height: auto;
+  }
+
+  .historico-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .custom-date-selector {
+    width: 100%;
+  }
+
+  .selector-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .month-dropdown {
+    width: 100%;
+  }
+
+  /* Resumo Mensal Empilhado */
+  .monthly-summary-box {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .ms-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center !important;
+  }
+
+  .ms-divider {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+  }
+
+  /* Lista de Transações */
+  .transaction-item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .t-icon {
+    width: 36px;
+    height: 36px;
+    margin-right: 0;
+  }
+
+  .t-info strong {
+    font-size: 14px;
+  }
+
+  .t-cat-date {
+    font-size: 11px;
+  }
+
+  .t-value {
+    font-size: 13px;
+    margin: 0 8px 0 0;
+  }
+
+  .delete-btn {
+    opacity: 1;
+    background-color: transparent;
+    padding: 4px;
+  }
+}
