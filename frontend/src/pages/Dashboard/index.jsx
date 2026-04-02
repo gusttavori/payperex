@@ -24,29 +24,18 @@ export default function Dashboard({ onLogout }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState('entrada');
   const [transactions, setTransactions] = useState([]);
+
   const [userName, setUserName] = useState('');
 
-  // --- ESTADOS DOS FILTROS ---
-  const [filterMode, setFilterMode] = useState('mes');
-
+  // --- ESTADO DO FILTRO MENSAL ---
+  // Formato padronizado do HTML: YYYY-MM
   const [filterMonth, setFilterMonth] = useState(() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
   });
 
-  const [filterPeriod, setFilterPeriod] = useState(() => {
-    const end = new Date();
-    const start = new Date();
-    start.setDate(start.getDate() - 30);
-    return {
-      start: start.toISOString().split('T')[0],
-      end: end.toISOString().split('T')[0]
-    };
-  });
-
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
-  // 1. CARREGA OS DADOS BRUTOS
   const loadData = useCallback(async () => {
     try {
       const response = await api.get('/transactions');
@@ -58,6 +47,7 @@ export default function Dashboard({ onLogout }) {
 
   useEffect(() => {
     loadData();
+
     const storedName = localStorage.getItem('user_name');
     if (storedName) {
       setUserName(storedName);
@@ -66,28 +56,21 @@ export default function Dashboard({ onLogout }) {
     }
   }, [loadData]);
 
-  // 2. FILTRA OS DADOS GLOBALMENTE
-  // Essa lista será a base para TODOS os cards e gráficos
+  // --- 1. FILTRO DE TRANSAÇÕES APENAS PARA O MÊS SELECIONADO ---
   const filteredTransactions = useMemo(() => {
-    return transactions.filter(curr => {
-      const d = new Date(curr.date);
-      if (isNaN(d.getTime())) return false;
+    return transactions.filter(t => {
+      if (!t.date) return false;
+      if (!filterMonth) return true; // Se o usuário limpar o campo, mostra tudo
 
-      if (filterMode === 'mes') {
-        if (!filterMonth) return true;
-        const [year, month] = filterMonth.split('-');
-        return d.getFullYear() === parseInt(year, 10) && d.getMonth() === (parseInt(month, 10) - 1);
-      } else {
-        if (!filterPeriod.start || !filterPeriod.end) return true;
-        const start = new Date(`${filterPeriod.start}T00:00:00`);
-        const end = new Date(`${filterPeriod.end}T23:59:59`);
-        return d >= start && d <= end;
-      }
+      // Pega apenas "YYYY-MM" da data do banco e compara com o filtro
+      return t.date.substring(0, 7) === filterMonth;
     });
-  }, [transactions, filterMode, filterMonth, filterPeriod]);
+  }, [transactions, filterMonth]);
 
-  // 3. CALCULA O RESUMO (SALDO, ENTRADAS, SAÍDAS) BASEADO NO FILTRO
+
+  // --- 2. LÓGICA DO RESUMO FINANCEIRO (SALDO GERAL VS FLUXO MENSAL) ---
   const summary = useMemo(() => {
+    // A. Entradas e Saídas obedecem ao FILTRO do mês atual
     const income = filteredTransactions
       .filter(t => t.type === 'entrada')
       .reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
@@ -96,14 +79,24 @@ export default function Dashboard({ onLogout }) {
       .filter(t => t.type === 'saida')
       .reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
 
+    // B. O Saldo Atual contabiliza TUDO na história da conta (Geral)
+    const totalIncome = transactions
+      .filter(t => t.type === 'entrada')
+      .reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+
+    const totalExpense = transactions
+      .filter(t => t.type === 'saida')
+      .reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+
     return {
       income,
       expense,
-      balance: income - expense
+      balance: totalIncome - totalExpense // Saldo real e imutável
     };
-  }, [filteredTransactions]);
+  }, [filteredTransactions, transactions]);
 
-  // 4. PREPARA OS DADOS DOS GRÁFICOS
+
+  // --- 3. DADOS DOS GRÁFICOS (Baseados no filtro mensal) ---
   const comparisonData = useMemo(() => [
     { name: 'Entradas', value: summary.income },
     { name: 'Saídas', value: summary.expense },
@@ -131,17 +124,13 @@ export default function Dashboard({ onLogout }) {
     if (filteredTransactions.length === 0) return [];
 
     const grouped = filteredTransactions.reduce((acc, curr) => {
-      const d = new Date(curr.date);
       const val = Number(curr.amount) || 0;
-      const label = d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      const dateStr = curr.date.substring(0, 10);
+      const [year, month, day] = dateStr.split('-');
+      const label = `${day}/${month}`;
 
       if (!acc[label]) {
-        acc[label] = {
-          name: label,
-          rawDate: new Date(d.getFullYear(), d.getMonth(), d.getDate()),
-          entrada: 0,
-          saida: 0
-        };
+        acc[label] = { name: label, rawDate: dateStr, entrada: 0, saida: 0 };
       }
 
       if (curr.type === 'entrada') acc[label].entrada += val;
@@ -150,8 +139,9 @@ export default function Dashboard({ onLogout }) {
       return acc;
     }, {});
 
-    return Object.values(grouped).sort((a, b) => a.rawDate - b.rawDate);
+    return Object.values(grouped).sort((a, b) => a.rawDate.localeCompare(b.rawDate));
   }, [filteredTransactions]);
+
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -165,8 +155,21 @@ export default function Dashboard({ onLogout }) {
     setIsModalOpen(true);
   };
 
+  const inputStyle = {
+    padding: '6px 12px',
+    borderRadius: '6px',
+    border: '1px solid #cbd5e1',
+    backgroundColor: '#f8fafc',
+    color: '#475569',
+    outline: 'none',
+    fontFamily: 'inherit',
+    fontSize: '0.9rem',
+    cursor: 'pointer'
+  };
+
   return (
     <div className="dashboard-container">
+
       <header className="dashboard-header">
         <div style={{ justifySelf: 'start' }}>
           <span className="user-code" style={{ textTransform: 'uppercase' }}>
@@ -208,47 +211,23 @@ export default function Dashboard({ onLogout }) {
 
       {activeTab === 'dashboard' && (
         <>
-          {/* BARRA DE FILTROS GLOBAL */}
-          <div className="dashboard-controls">
-            <div className="filter-title">
-              <Calendar size={18} color="#64748b" />
-              <span>Período de Análise:</span>
+          {/* BARRA DE FILTRO MENSAL */}
+          <div style={{
+            display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap',
+            marginBottom: '24px', background: 'white', padding: '16px 24px',
+            borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: '#475569' }}>
+              <Calendar size={18} />
+              <span>Mês de Análise:</span>
             </div>
-            <div className="filter-group">
-              <select
-                className="custom-select"
-                value={filterMode}
-                onChange={(e) => setFilterMode(e.target.value)}
-              >
-                <option value="mes">Por Mês</option>
-                <option value="periodo">Por Período</option>
-              </select>
 
-              {filterMode === 'mes' ? (
-                <input
-                  type="month"
-                  className="custom-input"
-                  value={filterMonth}
-                  onChange={(e) => setFilterMonth(e.target.value)}
-                />
-              ) : (
-                <div className="date-range-group">
-                  <input
-                    type="date"
-                    className="custom-input"
-                    value={filterPeriod.start}
-                    onChange={(e) => setFilterPeriod({ ...filterPeriod, start: e.target.value })}
-                  />
-                  <span className="filter-separator">até</span>
-                  <input
-                    type="date"
-                    className="custom-input"
-                    value={filterPeriod.end}
-                    onChange={(e) => setFilterPeriod({ ...filterPeriod, end: e.target.value })}
-                  />
-                </div>
-              )}
-            </div>
+            <input
+              type="month"
+              value={filterMonth}
+              onChange={(e) => setFilterMonth(e.target.value)}
+              style={inputStyle}
+            />
           </div>
 
           <div
@@ -257,7 +236,7 @@ export default function Dashboard({ onLogout }) {
           >
             <div className="balance-header">
               <Wallet size={20} />
-              <span>Saldo do Período</span>
+              <span>Saldo Atual (Geral)</span>
             </div>
 
             <div
@@ -266,13 +245,13 @@ export default function Dashboard({ onLogout }) {
             >
               {formatCurrency(summary.balance)}
             </div>
-            <div className="balance-footer">Considerando apenas as datas selecionadas acima</div>
+            <div className="balance-footer">Considerando todo o histórico financeiro da conta</div>
           </div>
 
           <div className="summary-grid">
             <div className="summary-card income">
               <div className="card-header">
-                <span>Total Entradas</span>
+                <span>Entradas no Mês</span>
                 <TrendingUp size={20} color="#22c55e" />
               </div>
               <div className="summary-value">
@@ -282,7 +261,7 @@ export default function Dashboard({ onLogout }) {
 
             <div className="summary-card expense">
               <div className="card-header">
-                <span>Total Saídas</span>
+                <span>Saídas no Mês</span>
                 <TrendingDown size={20} color="#ef4444" />
               </div>
               <div className="summary-value">
@@ -305,7 +284,7 @@ export default function Dashboard({ onLogout }) {
               <h3 className="chart-title">Entradas x Saídas</h3>
               <div className="chart-content" style={{ width: '100%', height: 300, minHeight: 300, display: 'block' }}>
                 {(summary.income === 0 && summary.expense === 0) ? (
-                  <div className="placeholder-box">Nenhuma transação no período</div>
+                  <div className="placeholder-box">Nenhuma transação no mês selecionado</div>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={comparisonData}>
@@ -327,7 +306,7 @@ export default function Dashboard({ onLogout }) {
               <h3 className="chart-title">Gastos por Categoria</h3>
               <div className="chart-content" style={{ width: '100%', height: 300, minHeight: 300, display: 'block' }}>
                 {categoryData.length === 0 ? (
-                  <div className="placeholder-box">Nenhum gasto no período</div>
+                  <div className="placeholder-box">Nenhum gasto registrado neste mês</div>
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
@@ -363,10 +342,10 @@ export default function Dashboard({ onLogout }) {
           </div>
 
           <div className="chart-card full-width-chart">
-            <h3 className="chart-title" style={{ margin: '0 0 1.5rem 0' }}>Evolução Financeira Diária</h3>
+            <h3 className="chart-title" style={{ margin: '0 0 1.5rem 0' }}>Evolução Financeira</h3>
             <div className="chart-content" style={{ width: '100%', height: 400, minHeight: 400, display: 'block' }}>
               {evolutionData.length === 0 ? (
-                <div className="placeholder-box">Nenhuma transação encontrada para este período.</div>
+                <div className="placeholder-box">Nenhuma transação encontrada para este mês.</div>
               ) : (
                 <ResponsiveContainer width="100%" height={400}>
                   <AreaChart data={evolutionData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
