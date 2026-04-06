@@ -3,24 +3,27 @@ const Transaction = require('../models/Transaction');
 // LISTAR
 const list = async (req, res) => {
   try {
-    // O middleware 'auth.js' já colocou as infos do usuário em req.user
+    // A SEGURANÇA COMEÇA AQUI: Criamos um filtro base que SEMPRE inclui a empresa
+    // Isso impede que a Empresa A veja dados da Empresa B, mesmo sendo Master.
+    let filtro = { empresa: req.user.empresa };
 
     if (req.user.role === 'master') {
       // === CENÁRIO MESTRE ===
-      // Traz TODAS as transações de TODAS as unidades
-      // O .populate troca o ID do usuário pelo objeto com o Nome, para sabermos de quem é a conta
-      const transactions = await Transaction.find()
-        .populate('user', 'name') 
+      // Já temos o filtro por empresa, então ele verá todas as unidades DAQUELA empresa.
+      const transactions = await Transaction.find(filtro)
+        .populate('user', 'name')
         .sort({ date: -1 });
-        
+
       return res.json(transactions);
 
     } else {
       // === CENÁRIO UNIDADE ===
-      // Traz apenas as transações DESTA unidade (req.user._id)
-      const transactions = await Transaction.find({ user: req.user._id })
+      // Além da empresa, filtramos pelo ID específico da unidade (usuário)
+      filtro.user = req.user._id;
+
+      const transactions = await Transaction.find(filtro)
         .sort({ date: -1 });
-        
+
       return res.json(transactions);
     }
 
@@ -31,14 +34,14 @@ const list = async (req, res) => {
 
 // CRIAR
 const create = async (req, res) => {
-  // Bloqueio: Mestre não deve lançar contas (para não sujar o relatório sem dono)
   if (req.user.role === 'master') {
-    return res.status(403).json({ message: "O perfil Mestre apenas visualiza os dados. Entre com o código de uma unidade para lançar." });
+    return res.status(403).json({ message: "O perfil Mestre apenas visualiza os dados." });
   }
 
   try {
     const transaction = new Transaction({
-      user: req.user._id, // Pega o ID da unidade logada
+      empresa: req.user.empresa, // CARIMBO CRÍTICO: Vincula a transação à empresa do usuário
+      user: req.user._id,
       description: req.body.description,
       amount: req.body.amount,
       type: req.body.type,
@@ -56,18 +59,21 @@ const create = async (req, res) => {
 // DELETAR
 const remove = async (req, res) => {
   try {
-    let query = { _id: req.params.id };
+    // SEGURANÇA MÁXIMA: A query de deleção OBRIGATORIAMENTE checa a empresa.
+    // Isso impede que alguém manipule o ID na URL para deletar algo de outra empresa.
+    let query = {
+      _id: req.params.id,
+      empresa: req.user.empresa
+    };
 
-    // Segurança: Se NÃO for mestre, só pode deletar se a transação for DELE
     if (req.user.role !== 'master') {
       query.user = req.user._id;
     }
-    // Se for mestre, ele deleta qualquer uma (pois a query só tem o ID da transação)
 
     const removedTransaction = await Transaction.deleteOne(query);
 
     if (removedTransaction.deletedCount === 0) {
-        return res.status(404).json({ message: "Transação não encontrada ou você não tem permissão para excluí-la." });
+      return res.status(404).json({ message: "Transação não encontrada ou permissão negada." });
     }
 
     res.json(removedTransaction);
@@ -76,9 +82,4 @@ const remove = async (req, res) => {
   }
 };
 
-// EXPORTAÇÃO PADRÃO
-module.exports = {
-  list,
-  create,
-  remove
-};
+module.exports = { list, create, remove };

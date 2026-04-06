@@ -5,16 +5,24 @@ const jwt = require('jsonwebtoken');
 const login = async (req, res) => {
   try {
     const inputCode = req.body.accessCode;
-    
-    // 1. Mapear os códigos do .env para objetos utilizáveis
-    // Certifique-se de que seu arquivo .env tenha essas variáveis definidas
+
+    // IDs das empresas gerados no MongoDB
+    const ID_REDENCAO = "69d3b7eae5db855ec7fea06c"; // Exemplo: 69d3b7eae5db855ec7fea06c
+    const ID_OFICINA = "69d3bdede5db855ec7fea06d";
+
+    // 1. Mapear os códigos do .env para objetos utilizáveis e VINCULAR AS EMPRESAS
     const validAccesses = [
-      { code: process.env.CODE_MASTER, name: 'Visão Geral (Mestre)', role: 'master' },
-      { code: process.env.CODE_UNIT_1, name: process.env.NAME_UNIT_1 || 'Unidade 1', role: 'unit' },
-      { code: process.env.CODE_UNIT_2, name: process.env.NAME_UNIT_2 || 'Unidade 2', role: 'unit' },
-      { code: process.env.CODE_UNIT_3, name: process.env.NAME_UNIT_3 || 'Unidade 3', role: 'unit' },
-      { code: process.env.CODE_UNIT_4, name: process.env.NAME_UNIT_4 || 'Unidade 4', role: 'unit' },
-      { code: process.env.CODE_UNIT_5, name: process.env.NAME_UNIT_5 || 'Unidade 5', role: 'unit' },
+      // === IGREJA REDENÇÃO ===
+      { code: process.env.CODE_MASTER, name: 'Visão Geral (Mestre)', role: 'master', empresaId: ID_REDENCAO },
+      { code: process.env.CODE_UNIT_1, name: process.env.NAME_UNIT_1 || 'Unidade 1', role: 'unit', empresaId: ID_REDENCAO },
+      { code: process.env.CODE_UNIT_2, name: process.env.NAME_UNIT_2 || 'Unidade 2', role: 'unit', empresaId: ID_REDENCAO },
+      { code: process.env.CODE_UNIT_3, name: process.env.NAME_UNIT_3 || 'Unidade 3', role: 'unit', empresaId: ID_REDENCAO },
+      { code: process.env.CODE_UNIT_4, name: process.env.NAME_UNIT_4 || 'Unidade 4', role: 'unit', empresaId: ID_REDENCAO },
+      { code: process.env.CODE_UNIT_5, name: process.env.NAME_UNIT_5 || 'Unidade 5', role: 'unit', empresaId: ID_REDENCAO },
+
+      // === NOVA EMPRESA (CLIENTE 2) ===
+      { code: process.env.CODE_MASTER_EMP2, name: 'Visão Geral - Oficina', role: 'master', empresaId: ID_OFICINA },
+      { code: process.env.CODE_UNIT_1_EMP2, name: process.env.NAME_UNIT_1_EMP2 || 'Oficina', role: 'unit', empresaId: ID_OFICINA },
     ];
 
     // 2. Verificar se o código digitado bate com algum do .env
@@ -27,34 +35,34 @@ const login = async (req, res) => {
     // 3. Verificar se esse usuário JÁ existe no banco (buscando pelo nome único)
     let user = await User.findOne({ name: targetAccess.name });
 
-    // 4. Se não existir, CRIA AUTOMATICAMENTE (Auto-Provisioning)
+    // 4. Se não existir, CRIA AUTOMATICAMENTE já com a empresa certa!
     if (!user) {
       const salt = await bcrypt.genSalt(10);
       const hashedCode = await bcrypt.hash(inputCode, salt);
-      
+
       user = new User({
         name: targetAccess.name,
         accessCode: hashedCode,
+        empresa: targetAccess.empresaId // <--- O CARIMBO AUTOMÁTICO AQUI
       });
-      
+
       await user.save();
-      console.log(`Usuário ${targetAccess.name} criado automaticamente.`);
-    } else {
-        // Opcional: Se o usuário já existe, poderíamos verificar se a senha bate.
-        // Mas como o .env é a fonte da verdade, se o código bateu lá em cima, liberamos o acesso.
-        // Isso facilita caso você mude o código no .env, o login continua funcionando.
+      console.log(`Usuário ${targetAccess.name} criado automaticamente na empresa ${targetAccess.empresaId}.`);
     }
 
-    // 5. Gerar Token incluindo a ROLE (papel) para o Front saber o que mostrar
-    const token = jwt.sign({ 
-      _id: user._id, 
-      role: targetAccess.role // 'master' ou 'unit'
+    // 5. Gerar Token incluindo a ROLE e a EMPRESA para o Front saber o que mostrar
+    // É AQUI QUE O ISOLAMENTO DE DADOS NASCE:
+    const token = jwt.sign({
+      _id: user._id,
+      role: targetAccess.role, // 'master' ou 'unit'
+      empresa: user.empresa    // <--- INJETAMOS A EMPRESA NO CRACHÁ DO USUÁRIO
     }, process.env.JWT_SECRET);
 
-    res.header('auth-token', token).send({ 
-      token, 
+    res.header('auth-token', token).send({
+      token,
       name: user.name,
-      role: targetAccess.role 
+      role: targetAccess.role,
+      empresa: user.empresa // Enviamos para o React caso você precise usar na UI
     });
 
   } catch (err) {
@@ -62,7 +70,6 @@ const login = async (req, res) => {
   }
 };
 
-// O register fica apenas como backup ou para testes manuais se necessário
 const register = async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);

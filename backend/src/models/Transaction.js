@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 const TransactionSchema = new mongoose.Schema({
-  // Referência ao usuário (para saber de quem é a conta)
+  empresa: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Empresa'
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -17,7 +20,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['entrada', 'saida'], // Só aceita esses dois valores
+    enum: ['entrada', 'saida'],
     required: true
   },
   category: {
