@@ -9,6 +9,7 @@ const login = async (req, res) => {
     // IDs das empresas gerados no MongoDB
     const ID_REDENCAO = "69d3b7eae5db855ec7fea06c"; // Exemplo: 69d3b7eae5db855ec7fea06c
     const ID_OFICINA = "69d3bdede5db855ec7fea06d";
+    const ID_JUSSANDRA = "69d3eae645abd625bd5a6dfe";
 
     // 1. Mapear os códigos do .env para objetos utilizáveis e VINCULAR AS EMPRESAS
     const validAccesses = [
@@ -20,9 +21,12 @@ const login = async (req, res) => {
       { code: process.env.CODE_UNIT_4, name: process.env.NAME_UNIT_4 || 'Unidade 4', role: 'unit', empresaId: ID_REDENCAO },
       { code: process.env.CODE_UNIT_5, name: process.env.NAME_UNIT_5 || 'Unidade 5', role: 'unit', empresaId: ID_REDENCAO },
 
-      // === NOVA EMPRESA (CLIENTE 2) ===
+      // === NOVA EMPRESA (OFICINA) ===
       { code: process.env.CODE_MASTER_EMP2, name: 'Visão Geral - Oficina', role: 'master', empresaId: ID_OFICINA },
       { code: process.env.CODE_UNIT_1_EMP2, name: process.env.NAME_UNIT_1_EMP2 || 'Oficina', role: 'unit', empresaId: ID_OFICINA },
+
+      // === PERFIL ISOLADO (JUSSANDRA) ===
+      { code: process.env.CODE_UNIT_JUSSANDRA, name: process.env.NAME_UNIT_JUSSANDRA, role: 'unit', empresaId: ID_JUSSANDRA },
     ];
 
     // 2. Verificar se o código digitado bate com algum do .env
