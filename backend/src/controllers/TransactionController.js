@@ -3,13 +3,9 @@ const Transaction = require('../models/Transaction');
 // LISTAR
 const list = async (req, res) => {
   try {
-    // A SEGURANÇA COMEÇA AQUI: Criamos um filtro base que SEMPRE inclui a empresa
-    // Isso impede que a Empresa A veja dados da Empresa B, mesmo sendo Master.
     let filtro = { empresa: req.user.empresa };
 
     if (req.user.role === 'master') {
-      // === CENÁRIO MESTRE ===
-      // Já temos o filtro por empresa, então ele verá todas as unidades DAQUELA empresa.
       const transactions = await Transaction.find(filtro)
         .populate('user', 'name')
         .sort({ date: -1 });
@@ -17,8 +13,6 @@ const list = async (req, res) => {
       return res.json(transactions);
 
     } else {
-      // === CENÁRIO UNIDADE ===
-      // Além da empresa, filtramos pelo ID específico da unidade (usuário)
       filtro.user = req.user._id;
 
       const transactions = await Transaction.find(filtro)
@@ -59,8 +53,6 @@ const create = async (req, res) => {
 // DELETAR
 const remove = async (req, res) => {
   try {
-    // SEGURANÇA MÁXIMA: A query de deleção OBRIGATORIAMENTE checa a empresa.
-    // Isso impede que alguém manipule o ID na URL para deletar algo de outra empresa.
     let query = {
       _id: req.params.id,
       empresa: req.user.empresa

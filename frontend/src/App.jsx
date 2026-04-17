@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard'; // Dashboard das Unidades
-import DashboardMaster from './pages/DashboardMaster'; // <--- Vamos criar agora
+import DashboardMaster from './pages/DashboardMaster'; // Dashboard Mestre
+import InstallPrompt from './components/InstallPrompt'; // <--- Importação do componente PWA
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -28,16 +29,30 @@ function App() {
     setUserRole(null);
   };
 
-  if (isAuthenticated) {
-    // SE FOR MESTRE, MOSTRA A TELA GERAL
-    if (userRole === 'master') {
-      return <DashboardMaster onLogout={handleLogout} />;
+  // Função auxiliar para decidir qual tela renderizar
+  const renderScreen = () => {
+    if (isAuthenticated) {
+      // SE FOR MESTRE, MOSTRA A TELA GERAL
+      if (userRole === 'master') {
+        return <DashboardMaster onLogout={handleLogout} />;
+      }
+      // SE FOR UNIDADE, MOSTRA O DASHBOARD COMUM
+      return <Dashboard onLogout={handleLogout} />;
     }
-    // SE FOR UNIDADE, MOSTRA O DASHBOARD COMUM
-    return <Dashboard onLogout={handleLogout} />;
-  }
 
-  return <Login onLogin={handleLogin} />;
+    // SE NÃO ESTIVER LOGADO, MOSTRA O LOGIN
+    return <Login onLogin={handleLogin} />;
+  };
+
+  return (
+    <>
+      {/* O sistema carrega a tela correspondente aqui */}
+      {renderScreen()}
+
+      {/* O pop-up do PWA fica flutuando globalmente por cima de tudo */}
+      <InstallPrompt />
+    </>
+  );
 }
 
 export default App;
